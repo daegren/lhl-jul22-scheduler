@@ -10,6 +10,8 @@ import reducer, {
 
 import useRealTimeUpdate from "hooks/useRealtimeUpdate";
 
+const HOST_URL = process.env.REACT_APP_API_BASE_URL || "";
+
 export default function useApplicationData() {
   const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
@@ -22,9 +24,9 @@ export default function useApplicationData() {
 
   useEffect(() => {
     Promise.all([
-      axios.get("/api/days"),
-      axios.get("/api/appointments"),
-      axios.get("/api/interviewers")
+      axios.get(`${HOST_URL}/api/days`),
+      axios.get(`${HOST_URL}/api/appointments`),
+      axios.get(`${HOST_URL}/api/interviewers`)
     ]).then(
       ([{ data: days }, { data: appointments }, { data: interviewers }]) =>
         dispatch({
@@ -39,17 +41,19 @@ export default function useApplicationData() {
   useRealTimeUpdate(process.env.REACT_APP_WEBSOCKET_URL, dispatch);
 
   function bookInterview(id, interview) {
-    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
-      dispatch({
-        type: SET_INTERVIEW,
-        id,
-        interview
+    return axios
+      .put(`${HOST_URL}/api/appointments/${id}`, { interview })
+      .then(() => {
+        dispatch({
+          type: SET_INTERVIEW,
+          id,
+          interview
+        });
       });
-    });
   }
 
   function cancelInterview(id) {
-    return axios.delete(`/api/appointments/${id}`).then(() => {
+    return axios.delete(`${HOST_URL}/api/appointments/${id}`).then(() => {
       dispatch({
         type: SET_INTERVIEW,
         id,
