@@ -17,6 +17,9 @@ jobs:
     working_directory: ~/repo
 
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "78:e6:7c:9e:a6:89:1a:e5:e5:6e:25:0a:3e:1c:fd:66"
       - checkout
 
       # Download and cache dependencies
@@ -35,3 +38,34 @@ jobs:
 
       # run tests!
       - run: yarn test
+
+  deploy:
+    machine:
+      enabled: true
+
+    working_directory: ~/client
+
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "78:e6:7c:9e:a6:89:1a:e5:e5:6e:25:0a:3e:1c:fd:66"
+      - checkout
+      - run:
+          name: Push Master to Production
+          command: |
+            git push https://github.com/daegren/lhl-jul22-scheduler.git master:production
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: production
+      - deploy:
+          filters:
+            branches:
+              ignore: production
+          requires:
+            - build
