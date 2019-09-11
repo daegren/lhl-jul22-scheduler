@@ -36,7 +36,7 @@ export default function useApplicationData() {
     );
   }, []);
 
-  useRealTimeUpdate(dispatch);
+  useRealTimeUpdate(process.env.REACT_APP_WEBSOCKET_URL, dispatch);
 
   function bookInterview(id, interview) {
     return axios.put(`/api/appointments/${id}`, { interview }).then(() => {

@@ -13,7 +13,9 @@ describe("useRealtimeUpdate", () => {
     const server = new Server(process.env.REACT_APP_WEBSOCKET_URL);
     const dispatch = jest.fn();
 
-    renderHook(() => useRealtimeUpdate(dispatch));
+    renderHook(() =>
+      useRealtimeUpdate(process.env.REACT_APP_WEBSOCKET_URL, dispatch)
+    );
 
     await server.connected;
 
@@ -26,7 +28,9 @@ describe("useRealtimeUpdate", () => {
     const server = new Server(process.env.REACT_APP_WEBSOCKET_URL);
     const dispatch = jest.fn();
 
-    renderHook(() => useRealtimeUpdate(dispatch));
+    renderHook(() =>
+      useRealtimeUpdate(process.env.REACT_APP_WEBSOCKET_URL, dispatch)
+    );
 
     await server.connected;
 

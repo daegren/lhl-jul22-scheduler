@@ -1,20 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { SET_INTERVIEW } from "reducers/application";
 
-export default function useRealtimeUpdate(dispatch) {
-  useEffect(() => {
-    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+export default function useRealtimeUpdate(url, dispatch) {
+  const socket = useRef();
 
-    socket.onmessage = event => {
+  useEffect(() => {
+    socket.current = new WebSocket(url);
+
+    return () => {
+      socket.current.close();
+    };
+  }, [url]);
+
+  useEffect(() => {
+    socket.current.onmessage = event => {
       const data = JSON.parse(event.data);
 
       if (typeof data === "object" && data.type === SET_INTERVIEW) {
         dispatch(data);
       }
-    };
-
-    return () => {
-      socket.close();
     };
   }, [dispatch]);
 }
